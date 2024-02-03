@@ -6,9 +6,15 @@ await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
 const config = {
-    images: {
-        domains: ["flowbite.s3.amazonaws.com"],
-    },
+  images: {
+    // remotePatterns: ["flowbite.s3.amazonaws.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "flowbite.s3.amazonaws.com",
+      },
+    ],
+  },
 };
 
 export default config;

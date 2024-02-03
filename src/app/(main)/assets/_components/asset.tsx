@@ -9,13 +9,7 @@ type AssetProps = {
 export const Asset = ({ image, name, description }: AssetProps) => {
   return (
     <div className="relative aspect-square w-full overflow-hidden transition-transform hover:cursor-pointer">
-      <Image
-        src={image}
-        alt={name}
-        layout="fill"
-        objectFit="cover"
-        className="h-full w-full"
-      />
+      <Image className="object-cover" src={image} alt={name} layout="fill" />
     </div>
   );
 };

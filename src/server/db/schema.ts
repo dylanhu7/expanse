@@ -4,9 +4,10 @@ import {
   integer,
   pgTableCreator,
   primaryKey,
-  serial,
+  real,
   text,
   timestamp,
+  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
@@ -19,12 +20,14 @@ import { type AdapterAccount } from "next-auth/adapters";
  */
 export const createTable = pgTableCreator((name) => `curator_${name}`);
 
-export const posts = createTable(
-  "post",
+export const spaces = createTable(
+  "space",
   {
-    id: serial("id").primaryKey(),
+    id: uuid("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
     name: varchar("name", { length: 256 }),
-    createdById: varchar("createdById", { length: 255 })
+    ownerId: varchar("ownerId", { length: 255 })
       .notNull()
       .references(() => users.id),
     createdAt: timestamp("created_at")
@@ -33,9 +36,50 @@ export const posts = createTable(
     updatedAt: timestamp("updatedAt"),
   },
   (example) => ({
-    createdByIdIdx: index("createdById_idx").on(example.createdById),
-    nameIndex: index("name_idx").on(example.name),
-  })
+    ownerIdIdx: index("ownerId_idx").on(example.ownerId),
+  }),
+);
+
+export const assets = createTable(
+  "asset",
+  {
+    id: uuid("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    name: varchar("name", { length: 256 }),
+    ownerId: varchar("ownerId", { length: 255 })
+      .notNull()
+      .references(() => users.id),
+    createdAt: timestamp("created_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updatedAt"),
+  },
+  (example) => ({
+    ownerIdIdx: index("ownerId_idx").on(example.ownerId),
+  }),
+);
+
+export const spaceAssets = createTable(
+  "spaceAsset",
+  {
+    id: uuid("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    assetId: uuid("assetId").references(() => assets.id),
+    spaceId: uuid("spaceId").references(() => spaces.id),
+    createdAt: timestamp("created_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updatedAt"),
+    x: integer("x").notNull(),
+    y: integer("y").notNull(),
+    scale: real("scale").notNull(),
+  },
+  (example) => ({
+    assetIdIdx: index("assetId_idx").on(example.assetId),
+    spaceIdIdx: index("spaceId_idx").on(example.spaceId),
+  }),
 );
 
 export const users = createTable("user", {
@@ -76,7 +120,7 @@ export const accounts = createTable(
       columns: [account.provider, account.providerAccountId],
     }),
     userIdIdx: index("account_userId_idx").on(account.userId),
-  })
+  }),
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -96,7 +140,7 @@ export const sessions = createTable(
   },
   (session) => ({
     userIdIdx: index("session_userId_idx").on(session.userId),
-  })
+  }),
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -112,5 +156,5 @@ export const verificationTokens = createTable(
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  })
+  }),
 );
