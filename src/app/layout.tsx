@@ -30,7 +30,6 @@ export default function RootLayout({
           <TRPCReactProvider>
             <div className="flex h-screen flex-col">
               <Header />
-              <Separator />
               {children}
             </div>
           </TRPCReactProvider>
