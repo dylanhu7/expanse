@@ -73,7 +73,7 @@ const AssetsPage = () => {
 
   return (
     <div className="flex h-full flex-row items-stretch overflow-hidden">
-      <ScrollArea className="w-2/3 overflow-auto p-4">
+      <ScrollArea className="w-2/3 overflow-auto px-8 py-2">
         <div className="grid grid-cols-6 gap-4">
           {images.map((image, index) => (
             <Asset
