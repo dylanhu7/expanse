@@ -3,8 +3,19 @@
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Sidebar } from "./_components/sidebar";
 import { Asset } from "./_components/asset";
+import { AddAsset } from "./_components/add-asset";
+import { useState } from "react";
+import { useDropzone } from "react-dropzone";
+
+type ImageObject = {
+  url: string;
+  name: string;
+  description: string;
+};
 
 const AssetsPage = () => {
+  const [focusedElement, setFocusedElement] = useState({} as ImageObject);
+
   const images = [
     {
       url: "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image.jpg",
@@ -71,22 +82,36 @@ const AssetsPage = () => {
     },
   ];
 
+  const onDrop = (acceptedFiles: File[]) => {
+    console.log(acceptedFiles);
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+
   return (
-    <div className="flex h-full flex-row items-stretch overflow-hidden">
-      <ScrollArea className="w-2/3 overflow-auto px-8 py-2">
+    <div
+      {...getRootProps()}
+      className="flex h-full flex-row items-stretch overflow-hidden"
+    >
+      <input {...getInputProps()} />
+      <ScrollArea className="w-2/3 overflow-auto px-8 py-8">
         <div className="grid grid-cols-6 gap-4">
           {images.map((image, index) => (
             <Asset
               key={index}
-              image={image.url}
-              name={image.name}
-              description={image.description}
+              image={{
+                url: image.url,
+                name: image.name,
+                description: image.description,
+              }}
+              setFocusedElement={setFocusedElement}
             />
           ))}
+          <AddAsset />
         </div>
       </ScrollArea>
 
-      <Sidebar />
+      <Sidebar focusedElement={focusedElement} />
     </div>
   );
 };

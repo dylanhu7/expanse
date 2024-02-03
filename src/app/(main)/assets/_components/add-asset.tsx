@@ -1,0 +1,11 @@
+import { PlusIcon } from "@radix-ui/react-icons";
+
+export const AddAsset = () => {
+  return (
+    <div className="relative aspect-square w-full overflow-hidden transition-transform hover:cursor-pointer">
+      <div className="absolute inset-0 flex items-center justify-center bg-gray-300 bg-opacity-50 hover:bg-opacity-75">
+        <PlusIcon className="h-8 w-8 text-white" />
+      </div>
+    </div>
+  );
+};
