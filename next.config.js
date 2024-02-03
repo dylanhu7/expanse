@@ -5,6 +5,10 @@
 await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+    images: {
+        domains: ["flowbite.s3.amazonaws.com"],
+    },
+};
 
 export default config;
