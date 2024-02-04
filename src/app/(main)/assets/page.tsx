@@ -14,7 +14,9 @@ type ImageObject = {
 };
 
 const AssetsPage = () => {
-  const [focusedElement, setFocusedElement] = useState({} as ImageObject);
+  const [focusedElement, setFocusedElement] = useState(
+    null as ImageObject | null,
+  );
   const [images, setImages] = useState<ImageObject[]>([
     {
       url: "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image.jpg",
@@ -88,14 +90,17 @@ const AssetsPage = () => {
       const newImages = acceptedFiles.map((file) => ({
         url: URL.createObjectURL(file),
         name: file.name,
-        description: "Uploaded image", // You might want to add a way to edit this
+        description: "Uploaded image",
       }));
       setImages((prev) => [...prev, ...newImages]);
     },
   });
 
   return (
-    <div {...getRootProps()} className="flex h-full gap-4">
+    <div
+      {...getRootProps()}
+      className="flex h-full gap-4 overflow-hidden px-8 py-8"
+    >
       <input {...getInputProps()} />
       <ScrollArea className="flex-1 overflow-auto pr-4">
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
