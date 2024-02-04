@@ -10,14 +10,60 @@ import { spaceAssets, spaces, walls } from "~/server/db/schema";
 
 export const spaceRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(z.object({ name: z.string().min(1) }))
+    .input(
+      z.object({
+        name: z.string().min(1),
+        spawnX: z.number(),
+        spawnY: z.number(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       return await ctx.db
         .insert(spaces)
         .values({
           name: input.name,
           ownerId: ctx.session.user.id,
+          spawnX: input.spawnX,
+          spawnY: input.spawnY,
         })
+        .returning();
+    }),
+
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string().min(1),
+        spawnX: z.number(),
+        spawnY: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const space = await ctx.db
+        .select()
+        .from(spaces)
+        .where(eq(spaces.id, input.id))
+        .limit(1);
+      if (!space.length || !space[0]) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Space not found",
+        });
+      }
+      if (space[0].ownerId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Space does not belong to you",
+        });
+      }
+      return await ctx.db
+        .update(spaces)
+        .set({
+          name: input.name,
+          spawnX: input.spawnX,
+          spawnY: input.spawnY,
+        })
+        .where(eq(spaces.id, input.id))
         .returning();
     }),
 

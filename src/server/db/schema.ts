@@ -28,6 +28,8 @@ export const spaces = createTable(
       .primaryKey()
       .default(sql`gen_random_uuid()`),
     name: varchar("name", { length: 256 }),
+    spawnX: real("spawnX").notNull(),
+    spawnY: real("spawnY").notNull(),
     ownerId: varchar("ownerId", { length: 255 })
       .notNull()
       .references(() => users.id),
