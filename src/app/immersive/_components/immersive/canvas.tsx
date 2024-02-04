@@ -51,9 +51,24 @@ function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
   }
   const { camera } = useThree();
   camera.position.set(3, 1.7, 3);
+
+  let isVR = false;
+  if (navigator.xr) {
+    navigator.xr
+      .isSessionSupported("immersive-vr")
+      .then((supported) => {
+        isVR = supported;
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+
   return (
     <>
-      <OrbitControls enableDamping enablePan target={[0, 0, 0]} makeDefault />
+      {!isVR && (
+        <OrbitControls enableDamping enablePan target={[0, 0, 0]} makeDefault />
+      )}
       <GizmoHelper alignment="bottom-right">
         <GizmoViewport
           axisColors={["red", "green", "blue"]}
