@@ -1,6 +1,11 @@
 "use client";
 
-import { useTexture } from "@react-three/drei";
+import {
+  GizmoHelper,
+  GizmoViewport,
+  OrbitControls,
+  useTexture,
+} from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { Controllers, Hands, VRButton, XR } from "@react-three/xr";
 import * as THREE from "three";
@@ -25,6 +30,16 @@ export function XRCanvas({ space, walls }: XRCanvasProps) {
     </>
   );
 }
+
+const checkIsVR = () => {
+  const userAgent = navigator.userAgent.toLowerCase();
+  return (
+    userAgent.includes("oculus") ||
+    userAgent.includes("quest") ||
+    userAgent.includes("vr") ||
+    userAgent.includes("goggles")
+  );
+};
 
 function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
   const AABB = (walls: Wall[]) => {
@@ -52,17 +67,7 @@ function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
   const { camera } = useThree();
   camera.position.set(3, 1.7, 3);
 
-  let isVR = false;
-  if (navigator.xr) {
-    navigator.xr
-      .isSessionSupported("immersive-vr")
-      .then((supported) => {
-        isVR = supported;
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }
+  const isVR = checkIsVR();
   const floorMap = useTexture("/floor.jpg");
   floorMap.wrapS = THREE.RepeatWrapping;
   floorMap.wrapT = THREE.RepeatWrapping;
@@ -73,18 +78,18 @@ function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
     <>
       {!isVR && (
         <>
-          {/* <OrbitControls
+          <OrbitControls
             enableDamping
             enablePan
             target={[0, 0, 0]}
             makeDefault
-          /> */}
-          {/* <GizmoHelper alignment="bottom-right">
+          />
+          <GizmoHelper alignment="bottom-right">
             <GizmoViewport
               axisColors={["red", "green", "blue"]}
               labelColor="white"
             />
-          </GizmoHelper> */}
+          </GizmoHelper>
         </>
       )}
 

@@ -50,7 +50,7 @@ export const UserAvatar = async () => {
                 <p className="text-sm font-medium leading-none">
                   {session?.user.name}
                 </p>
-                <p className="text-muted-foreground text-xs leading-none">
+                <p className="text-xs leading-none text-muted-foreground">
                   {session?.user?.email}
                 </p>
               </div>
@@ -58,7 +58,10 @@ export const UserAvatar = async () => {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <Link href="/">
-                <DropdownMenuItem>Spaces</DropdownMenuItem>
+                <DropdownMenuItem>My Spaces</DropdownMenuItem>
+              </Link>
+              <Link href="/browse">
+                <DropdownMenuItem>Browse Spaces</DropdownMenuItem>
               </Link>
               <Link href="/assets">
                 <DropdownMenuItem>Assets</DropdownMenuItem>

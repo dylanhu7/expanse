@@ -9,7 +9,7 @@ type DraggableAssetProps = {
 export const DraggableAsset = (props: DraggableAssetProps) => {
   return (
     <div
-      className="relative aspect-square w-full overflow-hidden rounded-sm"
+      className="relative aspect-square w-full cursor-pointer overflow-hidden rounded-sm"
       onClick={() => props.onClick(props.asset)}
     >
       <Image

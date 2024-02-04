@@ -9,9 +9,8 @@ import { Label } from "~/app/_components/ui/label";
 import { ScrollArea } from "~/app/_components/ui/scroll-area";
 import { useDebouncedCallbackAsync } from "~/lib/hooks/useDebouncedCallback";
 import { cn } from "~/lib/utils";
-import { type Space } from "~/server/db/schema";
+import { Asset, type Space } from "~/server/db/schema";
 import { api } from "~/trpc/react";
-import { Asset } from "~/server/db/schema";
 import { DraggableAsset } from "./_components/draggable-asset";
 
 export const SpaceSidebar = ({
@@ -91,13 +90,37 @@ export const SpaceSidebar = ({
                 Deselect
               </Button>
             </div>
-            <Button
-              className="flex items-center justify-center rounded-md p-4"
-              variant="outline"
-              onClick={toggleArtSetMode}
-            >
-              Place Art 🖼️
-            </Button>
+
+            <div className="flex flex-1 flex-col gap-4">
+              <Label>Assets</Label>
+              <ScrollArea className="flex-1 rounded-md border border-border">
+                <div className="grid grid-cols-3 gap-2 p-6">
+                  {data?.map(
+                    (asset, index) =>
+                      asset.imageUrl && (
+                        <div
+                          className="relative aspect-square w-full overflow-hidden rounded-sm"
+                          key={index}
+                        >
+                          <Image
+                            src={asset.imageUrl}
+                            alt={asset.title ?? "Asset"}
+                            fill
+                            objectFit="contain"
+                          />
+                        </div>
+                      ),
+                  )}
+                </div>
+              </ScrollArea>
+              <Button
+                className="flex items-center justify-center rounded-md p-4"
+                variant="outline"
+                onClick={toggleArtSetMode}
+              >
+                Place Art 🖼️
+              </Button>
+            </div>
           </div>
         )
       ) : (
@@ -134,16 +157,19 @@ export const SpaceSidebar = ({
             <div className="flex flex-1 flex-col gap-2">
               <Label>Assets</Label>
               <ScrollArea className="flex-1 rounded-md border border-border">
-                <div className="grid grid-cols-3 gap-2 p-2">
+                <div className="grid grid-cols-3 gap-2 p-6">
                   {data?.map(
-                    (asset) =>
+                    (asset, index) =>
                       asset.imageUrl && (
-                        <div key={asset.id} className="relative">
+                        <div
+                          className="relative aspect-square w-full overflow-hidden rounded-sm"
+                          key={index}
+                        >
                           <Image
-                            className="rounded-sm bg-primary/10"
                             src={asset.imageUrl}
                             alt={asset.title ?? "Asset"}
                             fill
+                            objectFit="contain"
                           />
                         </div>
                       ),

@@ -66,7 +66,7 @@ export default async function RootLayout({
   ];
 
   return (
-    <div className={!session?.user ? "dark" : ""}>
+    <div className={session ? "" : "dark"}>
       <ThemeProvider disableTransitionOnChange attribute="class">
         <TRPCReactProvider>
           {session?.user ? (
@@ -75,7 +75,7 @@ export default async function RootLayout({
               <div className="h-full overflow-hidden">{children}</div>
             </div>
           ) : (
-            <div className="flex h-screen flex-col items-center justify-center">
+            <div className="dark flex h-screen flex-col items-center justify-center">
               {emojis.map((emoji, index) => (
                 <span
                   key={index}
