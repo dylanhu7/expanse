@@ -16,6 +16,8 @@ export const SpaceSidebar = ({
   space,
   selectedLine,
   deselectLine,
+  artSetMode,
+  toggleArtSetMode,
 }: {
   space: Space;
   selectedLine: {
@@ -24,6 +26,8 @@ export const SpaceSidebar = ({
     direction: 1 | 2;
   };
   deselectLine: () => void;
+  artSetMode: boolean;
+  toggleArtSetMode: () => void;
 }) => {
   const [title, setTitle] = useState(
     space.name === null || space.name === "Untitled space" ? "" : space.name,
@@ -38,26 +42,38 @@ export const SpaceSidebar = ({
   return (
     <aside className="flex h-full w-full flex-shrink-0 basis-96 flex-col gap-8 overflow-hidden p-1">
       {selectedLine.start ? (
-        <div className="flex w-full flex-col gap-2">
-          <div className="flex w-full items-center justify-between">
-            <h3 className="text-2xl font-semibold text-muted-foreground">
-              Selected wall
-            </h3>
+        artSetMode ? (
+          <div className="flex w-full flex-col gap-4">lol</div>
+        ) : (
+          <div className="flex w-full flex-col gap-4">
+            <div className="flex w-full items-center justify-between gap-2">
+              <h3 className="text-2xl font-semibold text-muted-foreground">
+                Selected wall
+              </h3>
+              <Button
+                className="flex w-1/4 items-center justify-center rounded px-4"
+                variant="outline"
+              >
+                {selectedLine.direction === 1 ? "Side A" : "Side B"}
+              </Button>
+
+              <Button
+                className="flex items-center justify-center rounded px-4"
+                variant="destructive"
+                onClick={deselectLine}
+              >
+                Deselect
+              </Button>
+            </div>
             <Button
-              className="flex items-center justify-center rounded-full px-4"
-              variant="destructive"
-              onClick={deselectLine}
+              className="flex items-center justify-center rounded-md p-4"
+              variant="outline"
+              onClick={toggleArtSetMode}
             >
-              Deselect this wall
+              Place Art 🖼️
             </Button>
           </div>
-          <Button
-            className="flex items-center justify-center rounded-md p-4"
-            variant="ghost"
-          >
-            Place Art
-          </Button>
-        </div>
+        )
       ) : (
         <>
           <div className="flex flex-col gap-2">

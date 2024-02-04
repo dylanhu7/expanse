@@ -1,8 +1,9 @@
 "use client";
+import Image from "next/image";
 // import { Tldraw } from "@tldraw/tldraw";
-import { SpaceSidebar } from "~/app/(main)/space/[spaceId]/space-sidebar";
-import { type Space } from "~/server/db/schema";
 import { useState } from "react";
+import { SpaceSidebar } from "~/app/(main)/space/[spaceId]/space-sidebar";
+import { Asset, type Space } from "~/server/db/schema";
 
 const SpacePage = ({ space }: { space: Space }) => {
   const gridSize = 15;
@@ -23,6 +24,7 @@ const SpacePage = ({ space }: { space: Space }) => {
       direction: 1 | 2;
     },
   );
+  const [inArtSetMode, setInArtSetMode] = useState(false);
 
   const handleDotClick = (x: number, y: number) => {
     const newSelected = [...selectedDots, { x, y }];
@@ -75,6 +77,53 @@ const SpacePage = ({ space }: { space: Space }) => {
     );
   };
 
+  const calculateLineLength = (line: {
+    start: { x: number; y: number };
+    end: { x: number; y: number };
+  }) => {
+    const dx = line.end.x - line.start.x;
+    const dy = line.end.y - line.start.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  };
+
+  const renderBox = (line: {
+    start: { x: number; y: number };
+    end: { x: number; y: number };
+  }) => {
+    if (!line.start) return null;
+    const lineLength = calculateLineLength(line) * 200; // Assuming 40 pixels per grid unit
+    return (
+      <div
+        style={{
+          width: `${lineLength}px`,
+          height: "400px",
+        }}
+        className="border-2 border-current"
+      >
+        {assetsOnWall.map((asset) => (
+          <div
+            key={asset.asset.id}
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            <Image
+              src={asset.asset.imageUrl ?? ""}
+              alt={asset.asset.title ?? "Asset"}
+              width={100}
+              height={100}
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const [assetsOnWall, setAssetsOnWall] = useState([] as { asset: Asset }[]);
+
   const renderGrid = () => {
     const grid = [] as JSX.Element[];
     for (let i = 0; i < gridSize; i++) {
@@ -108,29 +157,35 @@ const SpacePage = ({ space }: { space: Space }) => {
 
   return (
     <div className="flex h-full gap-4 overflow-hidden px-8 py-8">
-      <div className="flex flex-1 items-center justify-center overflow-auto pr-4">
-        <svg width="600" height="600">
-          {lines.map((line, index) => (
-            <>
-              <line
-                key={index}
-                x1={line.start.x * 40 + 10}
-                y1={line.start.y * 40 + 10}
-                x2={line.end.x * 40 + 10}
-                y2={line.end.y * 40 + 10}
-                strokeWidth={12}
-                onClick={() => {
-                  setSelectedLine(line);
-                  toggleDirection(index);
-                }}
-                className="-z-10 cursor-pointer border-2 stroke-current text-cyan-800"
-              />
-            </>
-          ))}
-          {renderGrid()}
-          {selectedLine.start && renderDirectionDot(selectedLine)}
-        </svg>
-      </div>
+      {!inArtSetMode ? (
+        <div className="flex flex-1 items-center justify-center overflow-auto pr-4">
+          <svg width="600" height="600">
+            {lines.map((line, index) => (
+              <>
+                <line
+                  key={index}
+                  x1={line.start.x * 40 + 10}
+                  y1={line.start.y * 40 + 10}
+                  x2={line.end.x * 40 + 10}
+                  y2={line.end.y * 40 + 10}
+                  strokeWidth={12}
+                  onClick={() => {
+                    setSelectedLine(line);
+                    toggleDirection(index);
+                  }}
+                  className="-z-10 cursor-pointer border-2 stroke-current text-cyan-800"
+                />
+              </>
+            ))}
+            {renderGrid()}
+            {selectedLine.start && renderDirectionDot(selectedLine)}
+          </svg>
+        </div>
+      ) : (
+        <div className="flex flex-1 items-center justify-center overflow-auto pr-4">
+          {renderBox(selectedLine)}
+        </div>
+      )}
       <SpaceSidebar
         space={space}
         selectedLine={selectedLine}
@@ -143,6 +198,8 @@ const SpacePage = ({ space }: { space: Space }) => {
             },
           )
         }
+        artSetMode={inArtSetMode}
+        toggleArtSetMode={() => setInArtSetMode(!inArtSetMode)}
       />
     </div>
   );
