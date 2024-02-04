@@ -7,7 +7,7 @@ type AddAssetProps = {
 export const AddAsset = ({ onClick }: AddAssetProps) => {
   return (
     <div
-      className="relative aspect-square w-full overflow-hidden transition-transform hover:cursor-pointer"
+      className="relative aspect-square w-full overflow-hidden rounded-sm transition-transform hover:cursor-pointer"
       onClick={onClick}
     >
       <div className="absolute inset-0 flex items-center justify-center bg-gray-300 bg-opacity-50 hover:bg-opacity-75">

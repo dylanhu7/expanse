@@ -3,7 +3,7 @@
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { type PutBlobResult } from "@vercel/blob";
 import { upload } from "@vercel/blob/client";
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { AddAsset } from "~/app/(main)/assets/_components/add-asset";
 import { AssetView } from "~/app/(main)/assets/_components/asset-view";
@@ -73,12 +73,9 @@ const AssetsPage = ({ assets }: AssetsPageProps) => {
   };
 
   return (
-    <div
-      {...getRootProps()}
-      className="flex h-full gap-4 overflow-hidden px-8 py-8"
-    >
+    <div {...getRootProps()} className="flex h-full gap-4 overflow-hidden">
       <input {...getInputProps()} ref={inputRef} />
-      <ScrollArea className="flex-1 overflow-auto pr-4">
+      <ScrollArea className="flex-1 overflow-auto py-7 pl-7">
         <div className="grid grid-cols-2 gap-4 p-1 md:grid-cols-3 lg:grid-cols-4">
           {stateAssets.map((asset, index) => (
             <AssetView
