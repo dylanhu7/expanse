@@ -38,9 +38,15 @@ export const SpaceSidebar = ({
   const [title, setTitle] = useState(
     space.name === null || space.name === "Untitled space" ? "" : space.name,
   );
+  const updateMutation = api.space.update.useMutation();
   const updateName = useCallback(async () => {
-    console.log("updateName", space.id);
-  }, [space.id]);
+    await updateMutation.mutateAsync({
+      id: space.id,
+      name: title,
+      spawnX: 0,
+      spawnY: 0,
+    });
+  }, [space.id, title, updateMutation]);
   const updateNameDebounced = useDebouncedCallbackAsync(updateName, 2000);
 
   const { data } = api.asset.getMine.useQuery();
@@ -123,7 +129,10 @@ export const SpaceSidebar = ({
               <Input
                 placeholder="Add a title..."
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                  void updateNameDebounced();
+                }}
               />
             </div>
             <div className="flex flex-1 flex-col gap-2">
