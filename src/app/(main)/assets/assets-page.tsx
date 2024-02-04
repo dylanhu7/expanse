@@ -17,6 +17,7 @@ type AssetsPageProps = {
 
 const AssetsPage = ({ assets }: AssetsPageProps) => {
   const createAsset = api.asset.create.useMutation();
+  const updateAsset = api.asset.update.useMutation();
   const inputRef = useRef(null as HTMLInputElement | null);
   const onAddAssetClick = () => {
     if (inputRef.current) {
@@ -56,12 +57,19 @@ const AssetsPage = ({ assets }: AssetsPageProps) => {
     },
   });
 
-  const updatePropertiesOfImage = (updatedImage: Asset) => {
+  const updatePropertiesOfAsset = (updatedAsset: Asset) => {
     setStateAssets(
       stateAssets.map((image) =>
-        image.id === updatedImage.id ? updatedImage : image,
+        image.id === updatedAsset.id ? updatedAsset : image,
       ),
     );
+    updateAsset.mutate({
+      id: updatedAsset.id,
+      title: updatedAsset.title ?? undefined,
+      description: updatedAsset.description ?? undefined,
+      imageUrl: updatedAsset.imageUrl ?? undefined,
+      year: updatedAsset.year ?? 2024,
+    });
   };
 
   return (
@@ -85,7 +93,7 @@ const AssetsPage = ({ assets }: AssetsPageProps) => {
       </ScrollArea>
       <AssetsSidebar
         focusedElement={focusedElement ?? null}
-        onSave={updatePropertiesOfImage}
+        onSave={updatePropertiesOfAsset}
       />
     </div>
   );

@@ -16,7 +16,7 @@ import type { Asset } from "~/server/db/schema";
 
 type SidebarProps = {
   focusedElement: Asset | null;
-  onSave: (updatedImageObject: Asset) => void;
+  onSave: (updatedAsset: Asset) => void;
 };
 
 export const AssetsSidebar = ({ focusedElement, onSave }: SidebarProps) => {
