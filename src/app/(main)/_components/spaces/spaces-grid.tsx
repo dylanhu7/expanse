@@ -6,7 +6,7 @@ export const SpacesGrid = async () => {
   return (
     <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
       {spaces.reverse().map((space) => (
-        <SpaceCard key={space.id} space={space} />
+        <SpaceCard key={space.id} space={space} isOwner />
       ))}
     </div>
   );
