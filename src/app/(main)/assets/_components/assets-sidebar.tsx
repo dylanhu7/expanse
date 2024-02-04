@@ -15,7 +15,7 @@ type SidebarProps = {
 
 export const AssetsSidebar = ({ focusedElement }: SidebarProps) => {
   return (
-    <aside className="flex h-full w-full flex-shrink-0 basis-96 flex-col gap-2 overflow-hidden">
+    <aside className="flex h-full w-full flex-shrink-0 basis-96 flex-col gap-2 overflow-hidden px-1">
       <h2 className="text-xl font-semibold">Details</h2>
       <p className="text-sm text-gray-500">
         Edit the details of the selected asset.
