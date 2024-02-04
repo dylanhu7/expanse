@@ -9,11 +9,10 @@ export default async function ImmersiveViewLoader({
 }) {
   const space = await api.space.getOne.query({ id: params.spaceId });
   const walls = await api.space.getWalls.query({ spaceId: params.spaceId });
-  const assets = await api.space.getAssets.query({ spaceId: params.spaceId });
 
   return (
     <main className="h-screen w-screen">
-      <XRCanvas space={space} walls={walls} assets={assets} />
+      <XRCanvas space={space} walls={walls} />
     </main>
   );
 }
