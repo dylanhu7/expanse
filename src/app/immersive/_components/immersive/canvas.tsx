@@ -10,8 +10,8 @@ import { Canvas, useThree } from "@react-three/fiber";
 import { Controllers, Hands, VRButton, XR } from "@react-three/xr";
 import { WallElement } from "~/app/immersive/_components/immersive/wall";
 import {
-  SpaceAssetJoined,
   type Space,
+  type SpaceAssetJoined,
   type Wall,
   type WallJoined,
 } from "~/server/db/schema";

@@ -168,7 +168,7 @@ const SpacePage = ({
           width: `${lineLength}px`,
           height: "400px",
         }}
-        className="flex flex-row items-center justify-around border-2 border-current"
+        className=" flex flex-row items-center justify-around rounded-md border border-border"
       >
         {selectedLine.assets.map(
           (asset, index) =>

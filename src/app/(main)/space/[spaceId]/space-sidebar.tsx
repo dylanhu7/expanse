@@ -2,6 +2,7 @@
 
 import { Share2Icon } from "@radix-ui/react-icons";
 import Image from "next/image";
+import Link from "next/link";
 import { useCallback, useState } from "react";
 import { Button } from "~/app/_components/ui/button";
 import { Input } from "~/app/_components/ui/input";
@@ -48,7 +49,7 @@ export const SpaceSidebar = ({
     <aside className="flex h-full w-full flex-shrink-0 basis-96 flex-col gap-8 overflow-hidden p-1">
       {selectedLine.start ? (
         artSetMode ? (
-          <div className="flex h-full flex-col gap-4 p-2">
+          <div className="space-between flex h-full flex-col gap-4 p-2">
             <h3 className="text-2xl font-semibold text-muted-foreground">
               Assets
             </h3>
@@ -70,55 +71,26 @@ export const SpaceSidebar = ({
             </Button>
           </div>
         ) : (
-          <div className="flex w-full flex-col gap-4">
-            <div className="flex w-full items-center justify-between gap-2">
-              <h3 className="text-2xl font-semibold text-muted-foreground">
-                Selected wall
-              </h3>
-              <Button
-                className="flex w-1/4 items-center justify-center rounded px-4"
-                variant="outline"
-              >
+          <div className="flex w-full flex-1 flex-col items-center justify-center gap-4">
+            <div className="flex w-1/2 flex-col gap-4">
+              <h3 className="text-2xl font-semibold">
                 {selectedLine.direction === 1 ? "Side A" : "Side B"}
-              </Button>
-
+              </h3>
+              <div className="space-between flex w-full gap-2">
+                <Button
+                  className="flex flex-1 items-center justify-center rounded-md p-4"
+                  variant="outline"
+                  onClick={toggleArtSetMode}
+                >
+                  Place Art 🖼️
+                </Button>
+              </div>
               <Button
-                className="flex items-center justify-center rounded px-4"
+                className="flex flex-1 items-center justify-center rounded px-4"
                 variant="destructive"
                 onClick={deselectLine}
               >
                 Deselect
-              </Button>
-            </div>
-
-            <div className="flex flex-1 flex-col gap-4">
-              <Label>Assets</Label>
-              <ScrollArea className="flex-1 rounded-md border border-border">
-                <div className="grid grid-cols-3 gap-2 p-6">
-                  {data?.map(
-                    (asset, index) =>
-                      asset.imageUrl && (
-                        <div
-                          className="relative aspect-square w-full overflow-hidden rounded-sm"
-                          key={index}
-                        >
-                          <Image
-                            src={asset.imageUrl}
-                            alt={asset.title ?? "Asset"}
-                            fill
-                            objectFit="contain"
-                          />
-                        </div>
-                      ),
-                  )}
-                </div>
-              </ScrollArea>
-              <Button
-                className="flex items-center justify-center rounded-md p-4"
-                variant="outline"
-                onClick={toggleArtSetMode}
-              >
-                Place Art 🖼️
               </Button>
             </div>
           </div>
@@ -177,6 +149,9 @@ export const SpaceSidebar = ({
                 </div>
               </ScrollArea>
             </div>
+            <Button asChild className="h-16 text-lg font-bold">
+              <Link href={`/immersive/${space.id}`}>🚀 Lift off!</Link>
+            </Button>
           </div>
         </>
       )}
