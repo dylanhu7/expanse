@@ -1,7 +1,7 @@
 "use client";
 
-import { VRButton, ARButton, XR, Controllers, Hands } from "@react-three/xr";
 import { Canvas } from "@react-three/fiber";
+import { ARButton, Controllers, Hands, VRButton, XR } from "@react-three/xr";
 
 interface XRCanvasProps {
   data: string;

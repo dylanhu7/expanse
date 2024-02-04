@@ -1,11 +1,11 @@
 "use client";
 
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { AssetsSidebar } from "./_components/assets-sidebar";
-import { Asset } from "./_components/asset";
-import { AddAsset } from "./_components/add-asset";
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { AddAsset } from "~/app/(main)/assets/_components/add-asset";
+import { Asset } from "~/app/(main)/assets/_components/asset";
+import { AssetsSidebar } from "~/app/(main)/assets/_components/assets-sidebar";
 
 type ImageObject = {
   url: string;

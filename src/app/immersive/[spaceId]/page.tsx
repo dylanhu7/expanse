@@ -1,5 +1,5 @@
+import { XRCanvas } from "~/app/immersive/_components/immersive/canvas";
 import { api } from "~/trpc/server";
-import { XRCanvas } from "../../(main)/_components/immersive/canvas";
 
 export default async function Home({
   params,
