@@ -23,7 +23,7 @@ export default function RootLayout({
           <TRPCReactProvider>
             <div className="flex h-screen flex-col">
               <Header />
-              {children}
+              <div className="h-full overflow-hidden px-8 py-4">{children}</div>
             </div>
           </TRPCReactProvider>
         </ThemeProvider>

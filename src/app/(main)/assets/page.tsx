@@ -1,7 +1,7 @@
 "use client";
 
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { Sidebar } from "./_components/sidebar";
+import { AssetsSidebar } from "./_components/assets-sidebar";
 import { Asset } from "./_components/asset";
 import { AddAsset } from "./_components/add-asset";
 import { useState } from "react";
@@ -95,13 +95,10 @@ const AssetsPage = () => {
   });
 
   return (
-    <div
-      {...getRootProps()}
-      className="flex h-full flex-row items-stretch overflow-hidden"
-    >
+    <div {...getRootProps()} className="flex h-full gap-4">
       <input {...getInputProps()} />
-      <ScrollArea className="w-2/3 overflow-auto px-8 py-8">
-        <div className="grid grid-cols-6 gap-4">
+      <ScrollArea className="flex-1 overflow-auto pr-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
           {images.map((image, index) => (
             <Asset
               key={index}
@@ -113,7 +110,7 @@ const AssetsPage = () => {
         </div>
       </ScrollArea>
 
-      <Sidebar focusedElement={focusedElement} />
+      <AssetsSidebar focusedElement={focusedElement} />
     </div>
   );
 };

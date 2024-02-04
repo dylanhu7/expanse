@@ -16,7 +16,7 @@ async function CrudShowcase() {
   const session = await getServerAuthSession();
   if (!session?.user) return null;
 
-  const latestPost = await api.post.getLatest.query();
+  const latestPost = await api.space.getLatest.query();
 
   return (
     <div className="w-full max-w-xs">
