@@ -7,6 +7,12 @@ export const WallElement = ({ wall }: { wall: Wall }) => {
 
   const width = 0.1; // Arbitrary thickness of the wall
   const height = 3; // Height of the wall
+  // const myshape = new THREE.Shape();
+  // myshape.moveTo(0, 0);
+  // myshape.lineTo(0, height);
+  // myshape.lineTo(length, height);
+  // myshape.lineTo(length, 0);
+  // myshape.lineTo(0, 0);
 
   return (
     <mesh
@@ -19,11 +25,9 @@ export const WallElement = ({ wall }: { wall: Wall }) => {
       ]}
       rotation={[0, angle, 0]}
     >
-      <boxGeometry
-        args={[length, height, width]} // [width (length of the wall), height, depth (thickness)]
-        // Rotate around the y-axis to align with the start and end points
-      />
-      <meshStandardMaterial color="#fffffc" roughness={0.7} />
+      {/* <extrudeGeometry args={[myshape, { depth: width }]} /> */}
+      <boxGeometry args={[length, height, width]} />
+      <meshStandardMaterial color="#fffffc" roughness={0.9} metalness={0.4} />
     </mesh>
   );
 };

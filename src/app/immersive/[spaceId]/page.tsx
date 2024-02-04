@@ -2,7 +2,7 @@ import { XRCanvas } from "~/app/immersive/_components/immersive/canvas";
 import "~/styles/globals.css";
 import { api } from "~/trpc/server";
 
-export default async function Home({
+export default async function ImmersiveViewLoader({
   params,
 }: {
   params: { spaceId: string };

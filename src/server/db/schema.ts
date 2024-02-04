@@ -191,3 +191,7 @@ export type Asset = typeof assets.$inferSelect;
 export type SpaceAsset = typeof spaceAssets.$inferSelect;
 export type SpaceAssetJoined = { asset: Asset; spaceAsset: SpaceAsset };
 export type Wall = typeof walls.$inferSelect;
+export type User = typeof users.$inferSelect;
+export type Account = typeof accounts.$inferSelect;
+export type Session = typeof sessions.$inferSelect;
+export type VerificationToken = typeof verificationTokens.$inferSelect;

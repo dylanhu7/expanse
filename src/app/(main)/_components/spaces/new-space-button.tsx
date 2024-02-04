@@ -12,6 +12,8 @@ export const NewSpaceButton = () => {
         console.log("createSpace", createSpace);
         const space = await createSpace.mutateAsync({
           name: "Untitled space",
+          spawnX: 0,
+          spawnY: 0,
         });
       }}
     >
