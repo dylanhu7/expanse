@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Input } from "~/app/_components/ui/input";
 import { Textarea } from "~/app/_components/ui/textarea";
+import type { Asset } from "~/server/db/schema";
 import { Button } from "../../../_components/ui/button";
 import {
   DropdownMenu,
@@ -12,7 +13,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../../_components/ui/dropdown-menu";
-import type { Asset } from "~/server/db/schema";
 
 type SidebarProps = {
   focusedElement: Asset | null;
@@ -122,7 +122,7 @@ export const AssetsSidebar = ({ focusedElement, onSave }: SidebarProps) => {
           </div>
         </>
       ) : (
-        <div className="flex h-full items-center justify-center text-foreground/50">
+        <div className="text-und/50 flex h-full items-center justify-center">
           Select an asset to see its details.
         </div>
       )}
