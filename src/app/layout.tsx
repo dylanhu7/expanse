@@ -1,4 +1,5 @@
 import { ArrowRightIcon } from "@radix-ui/react-icons";
+import { Analytics } from "@vercel/analytics/react";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import { ThemeProvider } from "~/app/(main)/_components/theme/theme-provider";
@@ -83,6 +84,7 @@ export default async function RootLayout({
             )}
           </TRPCReactProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
