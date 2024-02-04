@@ -15,8 +15,7 @@ type ImageObject = {
 
 const AssetsPage = () => {
   const [focusedElement, setFocusedElement] = useState({} as ImageObject);
-
-  const images = [
+  const [images, setImages] = useState<ImageObject[]>([
     {
       url: "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image.jpg",
       name: "Mountain Sunrise",
@@ -80,13 +79,20 @@ const AssetsPage = () => {
       description:
         "A serene beach with crystal-clear waters on a tropical island.",
     },
-  ];
+  ]);
 
-  const onDrop = (acceptedFiles: File[]) => {
-    console.log(acceptedFiles);
-  };
-
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps } = useDropzone({
+    noClick: true,
+    noKeyboard: true,
+    onDrop: (acceptedFiles) => {
+      const newImages = acceptedFiles.map((file) => ({
+        url: URL.createObjectURL(file),
+        name: file.name,
+        description: "Uploaded image", // You might want to add a way to edit this
+      }));
+      setImages((prev) => [...prev, ...newImages]);
+    },
+  });
 
   return (
     <div
@@ -99,11 +105,7 @@ const AssetsPage = () => {
           {images.map((image, index) => (
             <Asset
               key={index}
-              image={{
-                url: image.url,
-                name: image.name,
-                description: image.description,
-              }}
+              image={image}
               setFocusedElement={setFocusedElement}
             />
           ))}
@@ -115,4 +117,5 @@ const AssetsPage = () => {
     </div>
   );
 };
+
 export default AssetsPage;
