@@ -1,4 +1,4 @@
-import { relations, sql, type InferSelectModel } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -184,5 +184,5 @@ export const verificationTokens = createTable(
   }),
 );
 
-export type Space = InferSelectModel<typeof spaces>;
-export type Asset = InferSelectModel<typeof assets>;
+export type Space = typeof spaces.$inferSelect;
+export type Asset = typeof assets.$inferSelect;
