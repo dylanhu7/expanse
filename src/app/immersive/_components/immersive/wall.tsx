@@ -30,10 +30,10 @@ export const WallElement = ({ wall }: { wall: Wall }) => {
     >
       {/* <extrudeGeometry args={[myshape, { depth: width }]} /> */}
       <boxGeometry args={[length, height, width]} />
-      <meshStandardMaterial
+      <meshPhysicalMaterial
         color="#fffffc"
-        roughness={0.9}
-        metalness={0.4}
+        // emissive={"#ffc"}
+        // emissiveIntensity={0.2}
         bumpMap={bumpMap}
       />
     </mesh>

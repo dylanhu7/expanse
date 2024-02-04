@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  GizmoHelper,
-  GizmoViewport,
-  OrbitControls,
-  useTexture,
-} from "@react-three/drei";
+import { useTexture } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { Controllers, Hands, VRButton, XR } from "@react-three/xr";
 import * as THREE from "three";
@@ -78,18 +73,18 @@ function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
     <>
       {!isVR && (
         <>
-          <OrbitControls
+          {/* <OrbitControls
             enableDamping
             enablePan
             target={[0, 0, 0]}
             makeDefault
-          />
-          <GizmoHelper alignment="bottom-right">
+          /> */}
+          {/* <GizmoHelper alignment="bottom-right">
             <GizmoViewport
               axisColors={["red", "green", "blue"]}
               labelColor="white"
             />
-          </GizmoHelper>
+          </GizmoHelper> */}
         </>
       )}
 
@@ -98,6 +93,11 @@ function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
           <primitive object={camera} />
         </mesh> */}
         <Controllers />
+        {!isVR && (
+          <mesh position={[1, 1, 1]}>
+            <boxGeometry args={[0.05, 0.05, 0.05]} />
+          </mesh>
+        )}
         <Hands />
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[0.05, 0.05, 0.05]} />
@@ -122,7 +122,7 @@ function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
         {pointLights.map((position, index) => (
           <pointLight
             key={index}
-            color="#fed"
+            color="#fdc"
             intensity={1}
             position={position}
             castShadow
@@ -132,10 +132,10 @@ function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
         {pointLights.map((position, index) => (
           <mesh key={index} position={position} rotation={[Math.PI / 2, 0, 0]}>
             <circleGeometry args={[0.1, 32]} />
-            <meshStandardMaterial
+            <meshPhysicalMaterial
               color="white"
-              emissive="white"
-              emissiveIntensity={1}
+              emissive="#fec"
+              emissiveIntensity={0.5}
             />
           </mesh>
         ))}
@@ -152,13 +152,13 @@ function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
         {/* floor geometry */}
         <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow castShadow>
           {/* polished concrete */}
-          <meshStandardMaterial
+          <meshPhysicalMaterial
             color="white"
-            emissive="black"
-            // emissiveIntensity={1}
+            emissive="gray"
             roughness={0}
-            metalness={0.6}
+            metalness={0.3}
             map={floorMap}
+            clearcoat={0.9}
           />
           <planeGeometry args={[100, 100]} />
         </mesh>
@@ -170,13 +170,7 @@ function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
           castShadow
         >
           {/* polished concrete */}
-          <meshStandardMaterial
-            color="white"
-            emissive="#fffffc"
-            emissiveIntensity={0.3}
-            roughness={1}
-            metalness={0.6}
-          />
+          <meshPhysicalMaterial color="#fffffc" roughness={1} metalness={0.6} />
           <planeGeometry args={[100, 100]} />
         </mesh>
         {/* <Environment preset="warehouse" background /> */}
