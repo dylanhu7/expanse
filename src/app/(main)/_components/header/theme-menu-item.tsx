@@ -17,11 +17,8 @@ export const ThemeMenuItem = () => {
       }}
       className="flex items-center justify-between"
     >
-      Theme
-      <div className="flex items-center gap-2">
-        {theme === "light" ? "Light" : theme === "dark" ? "Dark" : "System"}
-        {resolvedTheme === "light" ? <SunIcon /> : <MoonIcon />}
-      </div>
+      {`${theme === "light" ? "Light" : theme === "dark" ? "Dark" : "System"} theme`}
+      {resolvedTheme === "light" ? <SunIcon /> : <MoonIcon />}
     </DropdownMenuItem>
   );
 };

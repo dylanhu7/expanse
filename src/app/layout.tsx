@@ -2,11 +2,11 @@ import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import { ThemeProvider } from "~/app/(main)/_components/theme/theme-provider";
+import { cn } from "~/lib/utils";
 import { getServerAuthSession } from "~/server/auth";
 import "~/styles/globals.css";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Button } from "./_components/ui/button";
-import { cn } from "~/lib/utils";
 
 export const metadata = {
   title: "Expanse",
@@ -43,11 +43,11 @@ export default async function RootLayout({
   ];
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(`font-sans ${inter.variable}`, !session?.user && "dark")}
       >
-        <ThemeProvider attribute="class">
+        <ThemeProvider disableTransitionOnChange attribute="class">
           <TRPCReactProvider>
             {session?.user ? (
               children
