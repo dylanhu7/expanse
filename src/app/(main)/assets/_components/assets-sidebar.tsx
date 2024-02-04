@@ -1,7 +1,7 @@
 "use client";
 
-import { Input } from "~/app/_components/ui/input";
-import { Textarea } from "~/app/_components/ui/textarea";
+import { Input } from "~/app/(main)/_components/ui/input";
+import { Textarea } from "~/app/(main)/_components/ui/textarea";
 
 type ImageObject = {
   url: string;

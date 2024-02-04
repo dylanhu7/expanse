@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { UserAvatar } from "~/app/_components/header/user-avatar";
+import { UserAvatar } from "~/app/(main)/_components/header/user-avatar";
 
 export const Header = () => {
   return (

@@ -4,8 +4,8 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "~/app/_components/ui/avatar";
-import { Button } from "~/app/_components/ui/button";
+} from "~/app/(main)/_components/ui/avatar";
+import { Button } from "~/app/(main)/_components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +14,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "~/app/_components/ui/dropdown-menu";
+} from "~/app/(main)/_components/ui/dropdown-menu";
 import { getServerAuthSession } from "~/server/auth";
 
 export const UserAvatar = async () => {
