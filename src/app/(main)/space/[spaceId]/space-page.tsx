@@ -1,43 +1,119 @@
 "use client";
 import Image from "next/image";
-// import { Tldraw } from "@tldraw/tldraw";
 import { useState } from "react";
+import * as THREE from "three";
 import { SpaceSidebar } from "~/app/(main)/space/[spaceId]/space-sidebar";
-import { Asset, type Space } from "~/server/db/schema";
+import { type Asset, type Space, type WallJoined } from "~/server/db/schema";
+import { api } from "~/trpc/react";
 
-const SpacePage = ({ space }: { space: Space }) => {
+// type wall =
+// id: string;
+// createdAt: Date | null;
+// updatedAt: Date | null;
+// spaceId: string;
+// x1: number;
+// y1: number;
+// x2: number;
+// y2: number;
+
+type Line = {
+  start: { x: number; y: number };
+  end: { x: number; y: number };
+  direction: 1 | 2;
+  assets: Asset[];
+  directionOfAssets: number[];
+  canonicalNormal: THREE.Vector2;
+  id: string;
+};
+
+const SpacePage = ({
+  walls,
+  space,
+  possibleAssets,
+}: {
+  walls: WallJoined[];
+  space: Space;
+  possibleAssets: Asset[];
+}) => {
   const gridSize = 15;
   const [selectedDots, setSelectedDots] = useState(
     [] as { x: number; y: number }[],
   );
+
+  const getCanonicalNormal = (
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+  ) => {
+    const v = new THREE.Vector3(x2 - x1, 0, y2 - y1);
+    const n = new THREE.Vector3(0, 1, 0);
+    const cross = v.cross(n);
+    const cross2 = new THREE.Vector2(cross.x, cross.z);
+    return cross2.normalize();
+  };
   const [lines, setLines] = useState(
-    [] as {
-      start: { x: number; y: number };
-      end: { x: number; y: number };
-      direction: 1 | 2;
-    }[],
+    walls.map((wall) => ({
+      start: { x: wall.x1, y: wall.y1 },
+      end: { x: wall.x2, y: wall.y2 },
+      direction: 1 as 1 | 2,
+      assets: wall.spaceAssets.map((spaceAsset) => spaceAsset.asset),
+      directionOfAssets: wall.spaceAssets.map((spaceAsset) =>
+        spaceAsset.spaceAsset.onCanonicalWall ? 1 : 2,
+      ),
+      canonicalNormal: getCanonicalNormal(wall.x1, wall.y1, wall.x2, wall.y2),
+      id: wall.id,
+    })),
   );
   const [selectedLine, setSelectedLine] = useState(
     {} as {
       start: { x: number; y: number };
       end: { x: number; y: number };
       direction: 1 | 2;
+      assets: Asset[];
+      directionOfAssets: number[];
+      canonicalNormal: THREE.Vector2;
+      id: string;
     },
   );
+
+  const createWall = api.space.addWall.useMutation();
+  const addAssetToWall = api.space.addAsset.useMutation();
+
   const [inArtSetMode, setInArtSetMode] = useState(false);
 
   const handleDotClick = (x: number, y: number) => {
     const newSelected = [...selectedDots, { x, y }];
     setSelectedDots(newSelected);
-
     if (newSelected.length === 2) {
       const newLine = {
         start: newSelected[0] ?? { x: 0, y: 0 },
         end: newSelected[1] ?? { x: 0, y: 0 },
         direction: 1 as 1 | 2,
+        assets: [] as Asset[],
+        directionOfAssets: [],
+        canonicalNormal: getCanonicalNormal(
+          newSelected[0]!.x,
+          newSelected[0]!.y,
+          newSelected[1]!.x,
+          newSelected[1]!.y,
+        ),
+        id: "",
       };
+      void createWall
+        .mutateAsync({
+          spaceId: space.id,
+          x1: newLine.start.x,
+          y1: newLine.start.y,
+          x2: newLine.end.x,
+          y2: newLine.end.y,
+        })
+        .then((wall) => {
+          newLine.id = wall[0]!.id;
+        });
       setLines([...lines, newLine]);
       setSelectedDots([]);
+      console.log(lines);
     }
   };
 
@@ -53,17 +129,15 @@ const SpacePage = ({ space }: { space: Space }) => {
     setLines(newLines);
   };
 
-  const renderDirectionDot = (line: (typeof lines)[number]) => {
+  const renderDirectionDot = (line: typeof selectedLine & Line) => {
     const midX = ((line.start.x + line.end.x) / 2) * 40 + 10;
     const midY = ((line.start.y + line.end.y) / 2) * 40 + 10;
+    let offsetX = line.canonicalNormal.x * 20;
+    let offsetY = line.canonicalNormal.y * 20;
 
-    let offsetX = 0;
-    let offsetY = 0;
-
-    if (line.start.y === line.end.y) {
-      offsetY = line.direction === 1 ? -30 : 30;
-    } else {
-      offsetX = line.direction === 1 ? -30 : 30;
+    if (line.direction !== 1) {
+      offsetX *= -1;
+      offsetY *= -1;
     }
 
     return (
@@ -86,43 +160,33 @@ const SpacePage = ({ space }: { space: Space }) => {
     return Math.sqrt(dx * dx + dy * dy);
   };
 
-  const renderBox = (line: {
-    start: { x: number; y: number };
-    end: { x: number; y: number };
-  }) => {
-    if (!line.start) return null;
-    const lineLength = calculateLineLength(line) * 200; // Assuming 40 pixels per grid unit
+  const renderBox = () => {
+    const lineLength = calculateLineLength(selectedLine) * 200;
     return (
       <div
         style={{
           width: `${lineLength}px`,
           height: "400px",
         }}
-        className="border-2 border-current"
+        className="flex flex-row items-center justify-around border-2 border-current"
       >
-        {assetsOnWall.map((asset) => (
-          <div
-            key={asset.asset.id}
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-            }}
-          >
-            <Image
-              src={asset.asset.imageUrl ?? ""}
-              alt={asset.asset.title ?? "Asset"}
-              width={100}
-              height={100}
-            />
-          </div>
-        ))}
+        {selectedLine.assets.map(
+          (asset, index) =>
+            selectedLine.directionOfAssets[index] ===
+              selectedLine.direction && (
+              <div key={asset.id} className="h-24 w-24 bg-gray-200">
+                <Image
+                  src={asset.imageUrl ?? ""}
+                  alt={asset.title ?? "Asset"}
+                  width={100}
+                  height={100}
+                />
+              </div>
+            ),
+        )}
       </div>
     );
   };
-
-  const [assetsOnWall, setAssetsOnWall] = useState([] as { asset: Asset }[]);
 
   const renderGrid = () => {
     const grid = [] as JSX.Element[];
@@ -170,7 +234,7 @@ const SpacePage = ({ space }: { space: Space }) => {
                   y2={line.end.y * 40 + 10}
                   strokeWidth={12}
                   onClick={() => {
-                    setSelectedLine(line);
+                    setSelectedLine(line as typeof selectedLine & Line);
                     toggleDirection(index);
                   }}
                   className="-z-10 cursor-pointer border-2 stroke-current text-cyan-800"
@@ -183,23 +247,49 @@ const SpacePage = ({ space }: { space: Space }) => {
         </div>
       ) : (
         <div className="flex flex-1 items-center justify-center overflow-auto pr-4">
-          {renderBox(selectedLine)}
+          {renderBox()}
         </div>
       )}
       <SpaceSidebar
         space={space}
         selectedLine={selectedLine}
-        deselectLine={() =>
-          setSelectedLine(
-            {} as {
-              start: { x: number; y: number };
-              end: { x: number; y: number };
-              direction: 1 | 2;
-            },
-          )
-        }
+        possibleAssets={possibleAssets}
+        deselectLine={() => setSelectedLine({} as typeof selectedLine)}
         artSetMode={inArtSetMode}
         toggleArtSetMode={() => setInArtSetMode(!inArtSetMode)}
+        addAssetToWall={(asset) => {
+          addAssetToWall.mutate({
+            assetId: asset.id,
+            x: 0,
+            y: 0,
+            scale: 1,
+            onCanonicalWall: selectedLine.direction === 1,
+            wallId: selectedLine.id,
+            spaceId: space.id,
+          });
+          setSelectedLine({
+            ...selectedLine,
+            assets: [...selectedLine.assets, asset],
+            directionOfAssets: [
+              ...selectedLine.directionOfAssets,
+              selectedLine.direction,
+            ],
+          });
+          setLines(
+            lines.map((line) =>
+              line.start === selectedLine.start && line.end === selectedLine.end
+                ? {
+                    ...line,
+                    assets: [...line.assets, asset],
+                    directionOfAssets: [
+                      ...line.directionOfAssets,
+                      selectedLine.direction,
+                    ],
+                  }
+                : line,
+            ),
+          );
+        }}
       />
     </div>
   );

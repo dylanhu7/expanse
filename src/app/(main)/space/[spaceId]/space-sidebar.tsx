@@ -11,6 +11,8 @@ import { useDebouncedCallbackAsync } from "~/lib/hooks/useDebouncedCallback";
 import { cn } from "~/lib/utils";
 import { type Space } from "~/server/db/schema";
 import { api } from "~/trpc/react";
+import { Asset } from "~/server/db/schema";
+import { DraggableAsset } from "./_components/draggable-asset";
 
 export const SpaceSidebar = ({
   space,
@@ -18,6 +20,8 @@ export const SpaceSidebar = ({
   deselectLine,
   artSetMode,
   toggleArtSetMode,
+  possibleAssets,
+  addAssetToWall,
 }: {
   space: Space;
   selectedLine: {
@@ -28,6 +32,8 @@ export const SpaceSidebar = ({
   deselectLine: () => void;
   artSetMode: boolean;
   toggleArtSetMode: () => void;
+  possibleAssets: Asset[];
+  addAssetToWall: (asset: Asset) => void;
 }) => {
   const [title, setTitle] = useState(
     space.name === null || space.name === "Untitled space" ? "" : space.name,
@@ -43,7 +49,27 @@ export const SpaceSidebar = ({
     <aside className="flex h-full w-full flex-shrink-0 basis-96 flex-col gap-8 overflow-hidden p-1">
       {selectedLine.start ? (
         artSetMode ? (
-          <div className="flex w-full flex-col gap-4">lol</div>
+          <div className="flex h-full flex-col gap-4 p-2">
+            <h3 className="text-2xl font-semibold text-muted-foreground">
+              Assets
+            </h3>
+            <div className="grid grid-cols-2 gap-4 p-2">
+              {possibleAssets.map((asset) => (
+                <DraggableAsset
+                  key={asset.id}
+                  asset={asset}
+                  onClick={addAssetToWall}
+                />
+              ))}
+            </div>
+            <Button
+              className="flex items-center justify-center rounded-md p-4"
+              variant="outline"
+              onClick={toggleArtSetMode}
+            >
+              Done
+            </Button>
+          </div>
         ) : (
           <div className="flex w-full flex-col gap-4">
             <div className="flex w-full items-center justify-between gap-2">

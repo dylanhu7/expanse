@@ -3,15 +3,20 @@ import type { Asset } from "~/server/db/schema";
 
 type DraggableAssetProps = {
   asset: Asset;
+  onClick: (asset: Asset) => void;
 };
 
-const DraggableAsset = (props: DraggableAssetProps) => {
+export const DraggableAsset = (props: DraggableAssetProps) => {
   return (
-    <div className="h-full w-full">
+    <div
+      className="relative aspect-square w-full overflow-hidden rounded-sm"
+      onClick={() => props.onClick(props.asset)}
+    >
       <Image
         src={props.asset.imageUrl ?? ""}
         alt={props.asset.title ?? "Asset"}
         fill
+        objectFit="contain"
       />
     </div>
   );
