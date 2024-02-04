@@ -1,5 +1,5 @@
+import { eq } from "drizzle-orm";
 import { z } from "zod";
-
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -19,22 +19,20 @@ export const spaceRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
-      // simulate a slow db call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       await ctx.db.insert(spaces).values({
         name: input.name,
         ownerId: ctx.session.user.id,
       });
     }),
 
-  getLatest: publicProcedure.query(({ ctx }) => {
-    return ctx.db.query.spaces.findFirst({
-      orderBy: (spaces, { desc }) => [desc(spaces.createdAt)],
-    });
+  getAll: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.db.select().from(spaces);
   }),
 
-  getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
+  getMine: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db
+      .select()
+      .from(spaces)
+      .where(eq(spaces.ownerId, ctx.session.user.id));
   }),
 });

@@ -30,10 +30,8 @@ export const spaces = createTable(
     ownerId: varchar("ownerId", { length: 255 })
       .notNull()
       .references(() => users.id),
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updatedAt"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updatedAt").defaultNow(),
   },
   (example) => ({
     ownerIdIdx: index("ownerId_idx").on(example.ownerId),
@@ -50,10 +48,8 @@ export const assets = createTable(
     ownerId: varchar("ownerId", { length: 255 })
       .notNull()
       .references(() => users.id),
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updatedAt"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updatedAt").defaultNow(),
   },
   (example) => ({
     ownerIdIdx: index("ownerId_idx").on(example.ownerId),
@@ -68,10 +64,8 @@ export const spaceAssets = createTable(
       .default(sql`gen_random_uuid()`),
     assetId: uuid("assetId").references(() => assets.id),
     spaceId: uuid("spaceId").references(() => spaces.id),
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updatedAt"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updatedAt").defaultNow(),
     x: integer("x").notNull(),
     y: integer("y").notNull(),
     scale: real("scale").notNull(),
