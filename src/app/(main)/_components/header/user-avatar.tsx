@@ -1,5 +1,6 @@
 import { PersonIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
+import { ThemeMenuItem } from "~/app/(main)/_components/header/theme-menu-item";
 import {
   Avatar,
   AvatarFallback,
@@ -49,15 +50,23 @@ export const UserAvatar = async () => {
                 <p className="text-sm font-medium leading-none">
                   {session?.user.name}
                 </p>
-                <p className="text-xs leading-none text-muted-foreground">
+                <p className="text-muted-foreground text-xs leading-none">
                   {session?.user?.email}
                 </p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>Portfolio</DropdownMenuItem>
-              <DropdownMenuItem>Assets</DropdownMenuItem>
+              <Link href="/">
+                <DropdownMenuItem>Spaces</DropdownMenuItem>
+              </Link>
+              <Link href="/assets">
+                <DropdownMenuItem>Assets</DropdownMenuItem>
+              </Link>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <ThemeMenuItem />
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <Link href="/api/auth/signout">
