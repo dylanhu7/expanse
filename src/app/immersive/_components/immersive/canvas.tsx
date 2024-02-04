@@ -13,18 +13,29 @@ interface XRCanvasProps {
   data: string;
 }
 
+const inBrowser = "false";
+
 export function XRCanvas(props: XRCanvasProps) {
   return (
     <>
       <VRButton />
       <Canvas shadows>
-        <OrbitControls enableDamping enablePan target={[0, 0, 0]} makeDefault />
-        <GizmoHelper alignment="bottom-right">
-          <GizmoViewport
-            axisColors={["red", "green", "blue"]}
-            labelColor="white"
-          />
-        </GizmoHelper>
+        {inBrowser && (
+          <>
+            <OrbitControls
+              enableDamping
+              enablePan
+              target={[0, 0, 0]}
+              makeDefault
+            />
+            <GizmoHelper alignment="bottom-right">
+              <GizmoViewport
+                axisColors={["red", "green", "blue"]}
+                labelColor="white"
+              />
+            </GizmoHelper>
+          </>
+        )}
         <XR>
           <Controllers />
           <Hands />
@@ -46,22 +57,22 @@ export function XRCanvas(props: XRCanvasProps) {
           {exampleWalls.map((wall, index) => (
             <WallElement key={index} wall={wall} />
           ))}
-          <ambientLight intensity={0.5} />
-          <pointLight position={[1, 1, 1]} />
+          <ambientLight intensity={3} />
+          <pointLight position={[1, 3, 2]} castShadow />
+          <pointLight position={[2, 3, 1]} castShadow />
+          <pointLight position={[3, 3, 2]} castShadow />
           {/* floor geometry */}
-          {/* <mesh> */}
-          {/* polished concrete */}
-          {/* <meshStandardMaterial
+          <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow castShadow>
+            {/* polished concrete */}
+            <meshStandardMaterial
               color="white"
-              roughness={0.1}
-              metalness={0.1}
+              emissive={"black"}
+              // emissiveIntensity={1}
+              roughness={0}
+              metalness={0.2}
             />
-            <Plane
-              rotation={[-Math.PI / 2, 0, 0]}
-              args={[100, 100]}
-              receiveShadow
-            /> */}
-          {/* </mesh> */}
+            <planeGeometry args={[100, 100]} />
+          </mesh>
           {/* <Environment preset="warehouse" background /> */}
         </XR>
       </Canvas>

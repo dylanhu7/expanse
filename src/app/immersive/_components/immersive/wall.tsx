@@ -10,6 +10,8 @@ export const WallElement = ({ wall }: { wall: Wall }) => {
 
   return (
     <mesh
+      receiveShadow
+      castShadow
       position={[
         (x1 + x2) / 2, // Center x position
         height / 2, // Center y position, to make the bottom edge at y = 0
@@ -21,7 +23,7 @@ export const WallElement = ({ wall }: { wall: Wall }) => {
         args={[length, height, width]} // [width (length of the wall), height, depth (thickness)]
         // Rotate around the y-axis to align with the start and end points
       />
-      <meshStandardMaterial color="white" />
+      <meshStandardMaterial color="#fffffc" roughness={0.7} />
     </mesh>
   );
 };
