@@ -60,7 +60,7 @@ export const AssetsSidebar = ({ focusedElement, onSave }: SidebarProps) => {
             <Image
               src={editedObject.imageUrl ?? ""}
               alt={editedObject.title ?? "Asset"}
-              layout="fill"
+              fill
               objectFit="contain"
             />
           </div>
