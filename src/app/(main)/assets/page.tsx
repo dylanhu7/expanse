@@ -10,9 +10,11 @@ import { type PutBlobResult } from "@vercel/blob";
 import { upload } from "@vercel/blob/client";
 
 type ImageObject = {
-  url: string;
-  name: string;
-  description: string;
+  url?: string;
+  title?: string;
+  description?: string;
+  year?: number;
+  uid?: string;
 };
 
 const AssetsPage = () => {
@@ -28,33 +30,43 @@ const AssetsPage = () => {
   const [images, setImages] = useState<ImageObject[]>([
     {
       url: "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image.jpg",
-      name: "Mountain Sunrise",
+      title: "Mountain Sunrise",
       description:
         "A breathtaking view of a sunrise over a serene mountain landscape.",
+      year: 2021,
+      uid: "981bf2b234h234uhwerhwer",
     },
     {
       url: "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-2.jpg",
-      name: "City Lights",
+      title: "City Lights",
       description:
         "The vibrant city lights shining bright against the night sky.",
-    },
-    {
-      url: "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-1.jpg",
-      name: "Mountain Sunrise",
-      description:
-        "A breathtaking view of a sunrise over a serene mountain landscape.",
-    },
-    {
-      url: "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-2.jpg",
-      name: "Mountain Sunrise",
-      description:
-        "A breathtaking view of a sunrise over a serene mountain landscape.",
+      year: 2019,
+      uid: "981bfhdsvsqweqwknejqwekjn",
     },
     {
       url: "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-3.jpg",
-      name: "Mountain Sunrise",
+      title: "Mountain Sunrise",
       description:
         "A breathtaking view of a sunrise over a serene mountain landscape.",
+      year: 2002,
+      uid: "981bf2sdfisdfb234h234uhwerhwer",
+    },
+    {
+      url: "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-4.jpg",
+      title: "Mountain Sunrise",
+      description:
+        "A breathtaking view of a sunrise over a serene mountain landscape.",
+      year: 2010,
+      uid: "981bf2b234h234uhwerhwer128349njksdfo",
+    },
+    {
+      url: "https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-5.jpg",
+      title: "Mountain Sunrise",
+      description:
+        "A breathtaking view of a sunrise over a serene mountain landscape.",
+      year: 2012,
+      uid: "981bf2b234h23923n49wefnsdf84uhwerhwer1234",
     },
   ]);
 
@@ -69,7 +81,7 @@ const AssetsPage = () => {
         ...images,
         {
           url: "",
-          name: "loading...",
+          title: "loading...",
           description: "",
         },
       ]);
@@ -82,13 +94,21 @@ const AssetsPage = () => {
           ...images,
           {
             url: result.url,
-            name: file!.name,
+            title: file!.name,
             description: "",
           },
         ]);
       });
     },
   });
+
+  const updatePropertiesOfImage = (updatedImage: ImageObject) => {
+    setImages(
+      images.map((image) =>
+        image.uid === updatedImage.uid ? updatedImage : image,
+      ),
+    );
+  };
 
   return (
     <div
@@ -97,18 +117,22 @@ const AssetsPage = () => {
     >
       <input {...getInputProps()} ref={inputRef} />
       <ScrollArea className="flex-1 overflow-auto pr-4">
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 p-1 md:grid-cols-3 lg:grid-cols-4">
           {images.map((image, index) => (
             <Asset
               key={index}
               image={image}
+              focusedElement={focusedElement}
               setFocusedElement={setFocusedElement}
             />
           ))}
           <AddAsset onClick={onAddAssetClick} />
         </div>
       </ScrollArea>
-      <AssetsSidebar focusedElement={focusedElement} onSave={() => {}} />
+      <AssetsSidebar
+        focusedElement={focusedElement}
+        onSave={updatePropertiesOfImage}
+      />
     </div>
   );
 };

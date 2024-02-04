@@ -1,14 +1,24 @@
 "use client";
 
+import { ScrollArea } from "@radix-ui/react-scroll-area";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Input } from "~/app/(main)/_components/ui/input";
 import { Textarea } from "~/app/(main)/_components/ui/textarea";
 import { Button } from "../../_components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../_components/ui/dropdown-menu";
 
 type ImageObject = {
-  url: string;
-  name: string;
-  description: string;
+  url?: string;
+  title?: string;
+  description?: string;
+  year?: number;
+  uid?: string;
 };
 
 type SidebarProps = {
@@ -49,24 +59,57 @@ export const AssetsSidebar = ({ focusedElement, onSave }: SidebarProps) => {
   };
 
   return (
-    <aside className="flex h-full w-full flex-shrink-0 basis-96 flex-col gap-3 overflow-hidden px-1">
+    <aside className="flex h-full w-full flex-shrink-0 basis-96 flex-col gap-3 overflow-hidden pl-1 pr-4 pt-1">
       {editedObject ? (
         <>
-          <h2 className="text-xl font-semibold">Details</h2>
-          <p className="text-sm text-foreground/50">
-            Edit the details of the selected asset.
-          </p>
-          <Input
-            value={editedObject.name}
-            placeholder="Put the name of the asset here..."
-            onChange={(e) => handleChange("name", e.target.value)}
-          />
+          <div className="relative aspect-auto h-1/2">
+            <Image
+              src={editedObject.url ?? ""}
+              alt={editedObject.title ?? "Asset"}
+              layout="fill"
+              objectFit="contain"
+              className="rounded-sm border border-border"
+            />
+          </div>
+          <div className="flex flex-row gap-3">
+            <Input
+              value={editedObject.title}
+              placeholder="Put the name of the asset here..."
+              onChange={(e) => handleChange("title", e.target.value)}
+            />
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Button variant="outline" className="w-full">
+                  {editedObject.year ?? "Year"}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="bottom">
+                <ScrollArea className="max-h-60 overflow-auto">
+                  {[...(Array(200) as number[])].map((_, index) => (
+                    <DropdownMenuItem
+                      key={index}
+                      onClick={() =>
+                        handleChange(
+                          "year",
+                          (2024 - index) as unknown as string,
+                        )
+                      }
+                    >
+                      {2024 - index}
+                    </DropdownMenuItem>
+                  ))}
+                </ScrollArea>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <Textarea
             value={editedObject.description}
             placeholder="Put the description of the asset here..."
+            className="h-1/2"
             onChange={(e) => handleChange("description", e.target.value)}
           />
-          <div className="flex justify-end gap-3">
+
+          <div className="mt-2 flex justify-end gap-3">
             <Button
               disabled={!isChanged}
               onClick={handleCancel}

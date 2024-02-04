@@ -1,30 +1,42 @@
 import Image from "next/image";
 import { Skeleton } from "~/app/_components/ui/skeleton";
+import { cn } from "~/lib/utils";
 
 type ImageObject = {
-  url: string;
-  name: string;
-  description: string;
+  url?: string;
+  title?: string;
+  description?: string;
+  year?: number;
+  uid?: string;
 };
 
 type AssetProps = {
   image: ImageObject;
   setFocusedElement: (element: ImageObject) => void;
+  focusedElement: ImageObject | null;
 };
 
-export const Asset = ({ image, setFocusedElement }: AssetProps) => {
+export const Asset = ({
+  image,
+  setFocusedElement,
+  focusedElement,
+}: AssetProps) => {
+  const isFocused = focusedElement?.uid === image.uid;
+
   return (
     <div
-      className="relative aspect-square w-full overflow-hidden transition-transform hover:cursor-pointer"
+      className={cn(
+        "relative aspect-square w-full overflow-hidden rounded-sm transition-transform hover:cursor-pointer",
+        isFocused && "outline outline-2 outline-foreground/20",
+      )}
       onClick={() => setFocusedElement(image)}
     >
       {image.url ? (
         <Image
-          className="object-cover"
+          className={cn("rounded-sm bg-primary/10 object-cover")}
           src={image.url}
-          alt={image.name}
+          alt={image.title ?? "Asset"}
           layout="fill"
-          style={{ background: "rgb(238,238,238)" }}
         />
       ) : (
         <Skeleton className="h-full w-full" />
