@@ -1,5 +1,6 @@
 import { relations, sql, type InferSelectModel } from "drizzle-orm";
 import {
+  boolean,
   index,
   integer,
   pgTableCreator,
@@ -76,10 +77,33 @@ export const spaceAssets = createTable(
     x: integer("x").notNull(),
     y: integer("y").notNull(),
     scale: real("scale").notNull(),
+    wallId: uuid("wallId").references(() => walls.id),
+    onCanonicalWall: boolean("onCanonicalWall").notNull(),
   },
   (example) => ({
     assetIdIdx: index("assetId_idx").on(example.assetId),
     spaceIdIdx: index("spaceId_idx").on(example.spaceId),
+  }),
+);
+
+export const walls = createTable(
+  "wall",
+  {
+    id: uuid("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    spaceId: uuid("spaceId")
+      .references(() => spaces.id)
+      .notNull(),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updatedAt").defaultNow(),
+    x1: integer("x1").notNull(),
+    y1: integer("y1").notNull(),
+    x2: integer("x2").notNull(),
+    y2: integer("y2").notNull(),
+  },
+  (example) => ({
+    spaceIdIdx: index("wall_spaceId_idx").on(example.spaceId),
   }),
 );
 

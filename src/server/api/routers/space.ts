@@ -52,6 +52,23 @@ export const spaceRouter = createTRPCRouter({
       .where(eq(spaces.ownerId, ctx.session.user.id));
   }),
 
+  getOne: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const space = await ctx.db
+        .select()
+        .from(spaces)
+        .where(eq(spaces.id, input.id))
+        .limit(1);
+      if (!space.length || !space[0]) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Space not found",
+        });
+      }
+      return space[0];
+    }),
+
   getAssets: publicProcedure
     .input(z.object({ spaceId: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -62,14 +79,26 @@ export const spaceRouter = createTRPCRouter({
     }),
 
   addAsset: protectedProcedure
-    .input(z.object({ spaceId: z.string(), assetId: z.string() }))
+    .input(
+      z.object({
+        spaceId: z.string(),
+        assetId: z.string(),
+        x: z.number().int(),
+        y: z.number().int(),
+        scale: z.number(),
+        wallId: z.string(),
+        onCanonicalWall: z.boolean(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       await ctx.db.insert(spaceAssets).values({
         spaceId: input.spaceId,
         assetId: input.assetId,
-        x: 0,
-        y: 0,
-        scale: 1,
+        x: input.x,
+        y: input.y,
+        scale: input.scale,
+        wallId: input.wallId,
+        onCanonicalWall: input.onCanonicalWall,
       });
     }),
 
