@@ -158,3 +158,7 @@ export const verificationTokens = createTable(
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   }),
 );
+
+import { type InferSelectModel } from "drizzle-orm";
+
+export type Space = InferSelectModel<typeof spaces>;
