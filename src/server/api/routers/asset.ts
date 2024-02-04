@@ -63,6 +63,29 @@ export const assetRouter = createTRPCRouter({
         .where(eq(assets.id, input.id));
     }),
 
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const asset = await ctx.db
+        .select()
+        .from(assets)
+        .where(eq(assets.id, input.id))
+        .limit(1);
+      if (!asset.length || !asset[0]) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Asset not found",
+        });
+      }
+      if (asset[0].ownerId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Asset does not belong to you",
+        });
+      }
+      await ctx.db.delete(assets).where(eq(assets.id, input.id));
+    }),
+
   getMine: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db
       .select()

@@ -18,6 +18,29 @@ export const spaceRouter = createTRPCRouter({
       });
     }),
 
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const space = await ctx.db
+        .select()
+        .from(spaces)
+        .where(eq(spaces.id, input.id))
+        .limit(1);
+      if (!space.length || !space[0]) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Space not found",
+        });
+      }
+      if (space[0].ownerId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Space does not belong to you",
+        });
+      }
+      await ctx.db.delete(spaces).where(eq(spaces.id, input.id));
+    }),
+
   getAll: publicProcedure.query(async ({ ctx }) => {
     return await ctx.db.select().from(spaces);
   }),
