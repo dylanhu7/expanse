@@ -6,7 +6,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { spaceAssets, spaces } from "~/server/db/schema";
+import { spaceAssets, spaces, walls } from "~/server/db/schema";
 
 export const spaceRouter = createTRPCRouter({
   create: protectedProcedure
@@ -86,8 +86,8 @@ export const spaceRouter = createTRPCRouter({
       z.object({
         spaceId: z.string(),
         assetId: z.string(),
-        x: z.number().int(),
-        y: z.number().int(),
+        x: z.number(),
+        y: z.number(),
         scale: z.number(),
         wallId: z.string(),
         onCanonicalWall: z.boolean(),
@@ -112,8 +112,8 @@ export const spaceRouter = createTRPCRouter({
     .input(
       z.object({
         spaceAssetId: z.string(),
-        x: z.number().int(),
-        y: z.number().int(),
+        x: z.number(),
+        y: z.number(),
         scale: z.number(),
       }),
     )
@@ -191,5 +191,144 @@ export const spaceRouter = createTRPCRouter({
       await ctx.db
         .delete(spaceAssets)
         .where(eq(spaceAssets.id, input.spaceAssetId));
+    }),
+
+  getWalls: publicProcedure
+    .input(z.object({ spaceId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db
+        .select()
+        .from(walls)
+        .where(eq(walls.spaceId, input.spaceId));
+    }),
+
+  addWall: protectedProcedure
+    .input(
+      z.object({
+        spaceId: z.string(),
+        x1: z.number().int(),
+        y1: z.number().int(),
+        x2: z.number().int(),
+        y2: z.number().int(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const space = await ctx.db
+        .select()
+        .from(spaces)
+        .where(eq(spaces.id, input.spaceId))
+        .limit(1);
+      if (!space.length || !space[0]) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Space not found",
+        });
+      }
+      if (space[0].ownerId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Space does not belong to you",
+        });
+      }
+      return await ctx.db
+        .insert(walls)
+        .values({
+          spaceId: input.spaceId,
+          x1: input.x1,
+          y1: input.y1,
+          x2: input.x2,
+          y2: input.y2,
+        })
+        .returning();
+    }),
+
+  removeWall: protectedProcedure
+    .input(z.object({ wallId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const wall = await ctx.db
+        .select()
+        .from(walls)
+        .where(eq(walls.id, input.wallId))
+        .limit(1);
+      if (!wall.length || !wall[0]) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Wall not found",
+        });
+      }
+      const space = await ctx.db
+        .select()
+        .from(spaces)
+        .where(eq(spaces.id, wall[0].spaceId))
+        .limit(1);
+      if (!space.length || !space[0]) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Space not found",
+        });
+      }
+      if (space[0].ownerId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Space does not belong to you",
+        });
+      }
+      // Remove all assets on this wall
+      await ctx.db
+        .delete(spaceAssets)
+        .where(eq(spaceAssets.wallId, input.wallId));
+      // Remove the wall
+      await ctx.db.delete(walls).where(eq(walls.id, input.wallId));
+    }),
+
+  updateWall: protectedProcedure
+    .input(
+      z.object({
+        wallId: z.string(),
+        x1: z.number().int(),
+        y1: z.number().int(),
+        x2: z.number().int(),
+        y2: z.number().int(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const wall = await ctx.db
+        .select()
+        .from(walls)
+        .where(eq(walls.id, input.wallId))
+        .limit(1);
+      if (!wall.length || !wall[0]) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Wall not found",
+        });
+      }
+      const space = await ctx.db
+        .select()
+        .from(spaces)
+        .where(eq(spaces.id, wall[0].spaceId))
+        .limit(1);
+      if (!space.length || !space[0]) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Space not found",
+        });
+      }
+      if (space[0].ownerId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Space does not belong to you",
+        });
+      }
+      return await ctx.db
+        .update(walls)
+        .set({
+          x1: input.x1,
+          y1: input.y1,
+          x2: input.x2,
+          y2: input.y2,
+        })
+        .where(eq(walls.id, input.wallId))
+        .returning();
     }),
 });
