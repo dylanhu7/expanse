@@ -21,6 +21,10 @@ const config = {
         protocol: "https",
         hostname: "FmzdzEJFC4G1UYwk.public.blob.vercel-storage.com",
       },
+      {
+        protocol: "https",
+        hostname: "fmzdzejfc4g1uywk.public.blob.vercel-storage.com",
+      },
     ],
   },
 };
