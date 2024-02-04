@@ -1,3 +1,4 @@
+import { useTexture } from "@react-three/drei";
 import type { Wall } from "~/server/db/schema";
 
 export const WallElement = ({ wall }: { wall: Wall }) => {
@@ -14,6 +15,8 @@ export const WallElement = ({ wall }: { wall: Wall }) => {
   // myshape.lineTo(length, 0);
   // myshape.lineTo(0, 0);
 
+  const bumpMap = useTexture("/floor.jpg");
+
   return (
     <mesh
       receiveShadow
@@ -27,7 +30,12 @@ export const WallElement = ({ wall }: { wall: Wall }) => {
     >
       {/* <extrudeGeometry args={[myshape, { depth: width }]} /> */}
       <boxGeometry args={[length, height, width]} />
-      <meshStandardMaterial color="#fffffc" roughness={0.9} metalness={0.4} />
+      <meshStandardMaterial
+        color="#fffffc"
+        roughness={0.9}
+        metalness={0.4}
+        bumpMap={bumpMap}
+      />
     </mesh>
   );
 };

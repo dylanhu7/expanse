@@ -1,8 +1,14 @@
 "use client";
 
-import { GizmoHelper, GizmoViewport, OrbitControls } from "@react-three/drei";
+import {
+  GizmoHelper,
+  GizmoViewport,
+  OrbitControls,
+  useTexture,
+} from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { Controllers, Hands, VRButton, XR } from "@react-three/xr";
+import * as THREE from "three";
 import { WallElement } from "~/app/immersive/_components/immersive/wall";
 import type { Space, SpaceAssetJoined, Wall } from "~/server/db/schema";
 
@@ -42,7 +48,6 @@ function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
 
   // generate point lights uniformly in AABB, spaced 4 meters apart in a grid
   const { minX, maxX, minY, maxY } = AABB(exampleWalls);
-  console.log(minX, maxX, minY, maxY);
   const pointLights: [number, number, number][] = [];
   for (let x = minX; x < maxX; x += 4) {
     for (let y = minY; y < maxY; y += 4) {
@@ -63,18 +68,31 @@ function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
         console.error(err);
       });
   }
+  const floorMap = useTexture("/floor.jpg");
+  floorMap.wrapS = THREE.RepeatWrapping;
+  floorMap.wrapT = THREE.RepeatWrapping;
+  floorMap.repeat.set(10, 10);
+  console.log(isVR);
 
   return (
     <>
       {!isVR && (
-        <OrbitControls enableDamping enablePan target={[0, 0, 0]} makeDefault />
+        <>
+          <OrbitControls
+            enableDamping
+            enablePan
+            target={[0, 0, 0]}
+            makeDefault
+          />
+          <GizmoHelper alignment="bottom-right">
+            <GizmoViewport
+              axisColors={["red", "green", "blue"]}
+              labelColor="white"
+            />
+          </GizmoHelper>
+        </>
       )}
-      <GizmoHelper alignment="bottom-right">
-        <GizmoViewport
-          axisColors={["red", "green", "blue"]}
-          labelColor="white"
-        />
-      </GizmoHelper>
+
       <XR>
         {/* <mesh position={[1, 0, 0]}>
           <primitive object={camera} />
@@ -100,9 +118,15 @@ function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
           <WallElement key={index} wall={wall} />
         ))}
         {/* generate point lights uniformly in AABB */}
-        <ambientLight intensity={4} color="#fffffc" />
+        <ambientLight intensity={1} color="#fffffc" />
         {pointLights.map((position, index) => (
-          <pointLight key={index} color="#fed" position={position} castShadow />
+          <pointLight
+            key={index}
+            color="#fed"
+            intensity={1}
+            position={position}
+            castShadow
+          />
         ))}
         {/* point light geometry */}
         {pointLights.map((position, index) => (
@@ -111,7 +135,7 @@ function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
             <meshStandardMaterial
               color="white"
               emissive="white"
-              emissiveIntensity={4}
+              emissiveIntensity={1}
             />
           </mesh>
         ))}
@@ -130,10 +154,11 @@ function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
           {/* polished concrete */}
           <meshStandardMaterial
             color="white"
-            emissive="#444"
+            emissive="black"
             // emissiveIntensity={1}
             roughness={0}
             metalness={0.6}
+            map={floorMap}
           />
           <planeGeometry args={[100, 100]} />
         </mesh>
@@ -148,7 +173,7 @@ function Scene({ space, walls }: { space: Space; walls: Wall[] }) {
           <meshStandardMaterial
             color="white"
             emissive="#fffffc"
-            // emissiveIntensity={1}
+            emissiveIntensity={0.3}
             roughness={1}
             metalness={0.6}
           />
