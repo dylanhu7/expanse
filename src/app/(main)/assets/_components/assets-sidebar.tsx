@@ -3,15 +3,15 @@
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Input } from "~/app/(main)/_components/ui/input";
-import { Textarea } from "~/app/(main)/_components/ui/textarea";
-import { Button } from "../../_components/ui/button";
+import { Input } from "~/app/_components/ui/input";
+import { Textarea } from "~/app/_components/ui/textarea";
+import { Button } from "../../../_components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../../_components/ui/dropdown-menu";
+} from "../../../_components/ui/dropdown-menu";
 
 type ImageObject = {
   url?: string;
