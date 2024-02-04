@@ -1,4 +1,5 @@
 import { XRCanvas } from "~/app/immersive/_components/immersive/canvas";
+import "~/styles/globals.css";
 import { api } from "~/trpc/server";
 
 export default async function Home({
@@ -8,5 +9,9 @@ export default async function Home({
 }) {
   const spaces = await api.space.getAll.query();
 
-  return <XRCanvas data={`Hi! There are ${spaces.length} spaces.`} />;
+  return (
+    <main className="h-screen w-screen">
+      <XRCanvas data={`Hi! There are ${spaces.length} spaces.`} />
+    </main>
+  );
 }
