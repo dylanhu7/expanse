@@ -6,7 +6,13 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { assets, spaceAssets, spaces, walls } from "~/server/db/schema";
+import {
+  assets,
+  spaceAssets,
+  spaces,
+  walls,
+  type WallJoined,
+} from "~/server/db/schema";
 
 export const spaceRouter = createTRPCRouter({
   create: protectedProcedure
@@ -243,10 +249,31 @@ export const spaceRouter = createTRPCRouter({
   getWalls: publicProcedure
     .input(z.object({ spaceId: z.string() }))
     .query(async ({ ctx, input }) => {
-      return await ctx.db
+      const wallsRes = await ctx.db
         .select()
         .from(walls)
-        .where(eq(walls.spaceId, input.spaceId));
+        .where(eq(walls.spaceId, input.spaceId))
+        .leftJoin(spaceAssets, eq(spaceAssets.wallId, walls.id))
+        .leftJoin(assets, eq(assets.id, spaceAssets.assetId));
+
+      const wallsMap: Record<string, WallJoined> = {};
+
+      for (const wall of wallsRes) {
+        if (!wallsMap[wall.wall.id]) {
+          wallsMap[wall.wall.id] = {
+            ...wall.wall,
+            spaceAssets: [],
+          };
+        }
+        if (wall.spaceAsset && wall.asset) {
+          wallsMap[wall.wall.id]?.spaceAssets.push({
+            spaceAsset: wall.spaceAsset,
+            asset: wall.asset,
+          });
+        }
+      }
+
+      return Object.values(wallsMap);
     }),
 
   addWall: protectedProcedure
