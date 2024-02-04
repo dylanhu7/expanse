@@ -65,8 +65,12 @@ export const spaceAssets = createTable(
     id: uuid("id")
       .primaryKey()
       .default(sql`gen_random_uuid()`),
-    assetId: uuid("assetId").references(() => assets.id),
-    spaceId: uuid("spaceId").references(() => spaces.id),
+    assetId: uuid("assetId")
+      .references(() => assets.id)
+      .notNull(),
+    spaceId: uuid("spaceId")
+      .references(() => spaces.id)
+      .notNull(),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updatedAt").defaultNow(),
     x: integer("x").notNull(),

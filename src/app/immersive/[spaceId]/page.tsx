@@ -6,7 +6,7 @@ export default async function Home({
 }: {
   params: { spaceId: string };
 }) {
-  const hello = await api.space.hello.query({ text: "from tRPC" });
+  const spaces = await api.space.getAll.query();
 
-  return <XRCanvas data={hello.greeting} />;
+  return <XRCanvas data={`Hi! There are ${spaces.length} spaces.`} />;
 }
