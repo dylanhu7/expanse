@@ -12,10 +12,13 @@ export const spaceRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.insert(spaces).values({
-        name: input.name,
-        ownerId: ctx.session.user.id,
-      });
+      return await ctx.db
+        .insert(spaces)
+        .values({
+          name: input.name,
+          ownerId: ctx.session.user.id,
+        })
+        .returning();
     }),
 
   delete: protectedProcedure
@@ -91,15 +94,18 @@ export const spaceRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.insert(spaceAssets).values({
-        spaceId: input.spaceId,
-        assetId: input.assetId,
-        x: input.x,
-        y: input.y,
-        scale: input.scale,
-        wallId: input.wallId,
-        onCanonicalWall: input.onCanonicalWall,
-      });
+      return await ctx.db
+        .insert(spaceAssets)
+        .values({
+          spaceId: input.spaceId,
+          assetId: input.assetId,
+          x: input.x,
+          y: input.y,
+          scale: input.scale,
+          wallId: input.wallId,
+          onCanonicalWall: input.onCanonicalWall,
+        })
+        .returning();
     }),
 
   updateAsset: protectedProcedure
@@ -140,14 +146,15 @@ export const spaceRouter = createTRPCRouter({
           message: "Space does not belong to you",
         });
       }
-      await ctx.db
+      return await ctx.db
         .update(spaceAssets)
         .set({
           x: input.x,
           y: input.y,
           scale: input.scale,
         })
-        .where(eq(spaceAssets.id, input.spaceAssetId));
+        .where(eq(spaceAssets.id, input.spaceAssetId))
+        .returning();
     }),
 
   removeAsset: protectedProcedure

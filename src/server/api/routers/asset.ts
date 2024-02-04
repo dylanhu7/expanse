@@ -15,13 +15,16 @@ export const assetRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.insert(assets).values({
-        title: input.title,
-        description: input.description,
-        imageUrl: input.imageUrl,
-        year: input.year,
-        ownerId: ctx.session.user.id,
-      });
+      return await ctx.db
+        .insert(assets)
+        .values({
+          title: input.title,
+          description: input.description,
+          imageUrl: input.imageUrl,
+          year: input.year,
+          ownerId: ctx.session.user.id,
+        })
+        .returning();
     }),
 
   update: protectedProcedure
@@ -52,7 +55,7 @@ export const assetRouter = createTRPCRouter({
           message: "Asset does not belong to you",
         });
       }
-      await ctx.db
+      return await ctx.db
         .update(assets)
         .set({
           title: input.title,
@@ -60,7 +63,8 @@ export const assetRouter = createTRPCRouter({
           imageUrl: input.imageUrl,
           year: input.year,
         })
-        .where(eq(assets.id, input.id));
+        .where(eq(assets.id, input.id))
+        .returning();
     }),
 
   delete: protectedProcedure
