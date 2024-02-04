@@ -13,6 +13,10 @@ const config = {
         protocol: "https",
         hostname: "flowbite.s3.amazonaws.com",
       },
+      {
+        protocol: "https",
+        hostname: "jvxeg2xuulqys3w3.public.blob.vercel-storage.com",
+      },
     ],
   },
 };
