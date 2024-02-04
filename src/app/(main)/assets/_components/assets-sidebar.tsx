@@ -12,22 +12,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../../_components/ui/dropdown-menu";
-
-type ImageObject = {
-  url?: string;
-  title?: string;
-  description?: string;
-  year?: number;
-  uid?: string;
-};
+import type { Asset } from "~/server/db/schema";
 
 type SidebarProps = {
-  focusedElement: ImageObject | null;
-  onSave: (updatedImageObject: ImageObject) => void;
+  focusedElement: Asset | null;
+  onSave: (updatedImageObject: Asset) => void;
 };
 
 export const AssetsSidebar = ({ focusedElement, onSave }: SidebarProps) => {
-  const [editedObject, setEditedObject] = useState<ImageObject | null>(null);
+  const [editedObject, setEditedObject] = useState<Asset | null>(null);
   const [isChanged, setIsChanged] = useState(false);
 
   useEffect(() => {
@@ -51,7 +44,7 @@ export const AssetsSidebar = ({ focusedElement, onSave }: SidebarProps) => {
     }
   };
 
-  const handleChange = (key: keyof ImageObject, value: string) => {
+  const handleChange = (key: keyof Asset, value: string) => {
     if (editedObject) {
       setEditedObject({ ...editedObject, [key]: value });
       setIsChanged(true);
@@ -64,7 +57,7 @@ export const AssetsSidebar = ({ focusedElement, onSave }: SidebarProps) => {
         <>
           <div className="relative aspect-auto h-1/2">
             <Image
-              src={editedObject.url ?? ""}
+              src={editedObject.imageUrl ?? ""}
               alt={editedObject.title ?? "Asset"}
               layout="fill"
               objectFit="contain"
@@ -73,7 +66,7 @@ export const AssetsSidebar = ({ focusedElement, onSave }: SidebarProps) => {
           </div>
           <div className="flex flex-row gap-3">
             <Input
-              value={editedObject.title}
+              value={editedObject.title ?? ""}
               placeholder="Put the name of the asset here..."
               onChange={(e) => handleChange("title", e.target.value)}
             />
@@ -103,7 +96,7 @@ export const AssetsSidebar = ({ focusedElement, onSave }: SidebarProps) => {
             </DropdownMenu>
           </div>
           <Textarea
-            value={editedObject.description}
+            value={editedObject.description ?? ""}
             placeholder="Put the description of the asset here..."
             className="h-1/2"
             onChange={(e) => handleChange("description", e.target.value)}

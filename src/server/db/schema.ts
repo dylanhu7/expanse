@@ -161,3 +161,4 @@ export const verificationTokens = createTable(
 );
 
 export type Space = InferSelectModel<typeof spaces>;
+export type Asset = InferSelectModel<typeof assets>;

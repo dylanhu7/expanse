@@ -1,27 +1,20 @@
 import Image from "next/image";
 import { Skeleton } from "~/app/_components/ui/skeleton";
 import { cn } from "~/lib/utils";
+import type { Asset } from "~/server/db/schema";
 
-type ImageObject = {
-  url?: string;
-  title?: string;
-  description?: string;
-  year?: number;
-  uid?: string;
+type AssetViewProps = {
+  asset: Asset;
+  setFocusedElement: (element: Asset) => void;
+  focusedElement: Asset | null;
 };
 
-type AssetProps = {
-  image: ImageObject;
-  setFocusedElement: (element: ImageObject) => void;
-  focusedElement: ImageObject | null;
-};
-
-export const Asset = ({
-  image,
+export const AssetView = ({
+  asset,
   setFocusedElement,
   focusedElement,
-}: AssetProps) => {
-  const isFocused = focusedElement?.uid === image.uid;
+}: AssetViewProps) => {
+  const isFocused = focusedElement && asset && focusedElement?.id === asset.id;
 
   return (
     <div
@@ -29,13 +22,13 @@ export const Asset = ({
         "relative aspect-square w-full overflow-hidden rounded-sm transition-transform hover:cursor-pointer",
         isFocused && "outline outline-2 outline-foreground/20",
       )}
-      onClick={() => setFocusedElement(image)}
+      onClick={() => setFocusedElement(asset)}
     >
-      {image.url ? (
+      {asset?.imageUrl ? (
         <Image
           className={cn("rounded-sm bg-primary/10 object-cover")}
-          src={image.url}
-          alt={image.title ?? "Asset"}
+          src={asset.imageUrl}
+          alt={asset.title ?? "Asset"}
           layout="fill"
         />
       ) : (
