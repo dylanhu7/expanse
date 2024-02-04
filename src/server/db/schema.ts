@@ -44,7 +44,10 @@ export const assets = createTable(
     id: uuid("id")
       .primaryKey()
       .default(sql`gen_random_uuid()`),
-    name: varchar("name", { length: 256 }),
+    title: varchar("title", { length: 256 }),
+    description: text("description"),
+    imageUrl: varchar("imageUrl", { length: 256 }),
+    year: integer("year"),
     ownerId: varchar("ownerId", { length: 255 })
       .notNull()
       .references(() => users.id),
