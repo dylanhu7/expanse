@@ -1,4 +1,4 @@
-export type Wall = { x1: number; y1: number; x2: number; y2: number };
+import type { Wall } from "~/server/db/schema";
 
 export const WallElement = ({ wall }: { wall: Wall }) => {
   const { x1, y1, x2, y2 } = wall;

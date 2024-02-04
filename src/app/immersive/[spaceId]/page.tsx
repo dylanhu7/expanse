@@ -7,11 +7,13 @@ export default async function Home({
 }: {
   params: { spaceId: string };
 }) {
-  const spaces = await api.space.getAll.query();
+  const space = await api.space.getOne.query({ id: params.spaceId });
+  const walls = await api.space.getWalls.query({ spaceId: params.spaceId });
+  const assets = await api.space.getAssets.query({ spaceId: params.spaceId });
 
   return (
     <main className="h-screen w-screen">
-      <XRCanvas data={`Hi! There are ${spaces.length} spaces.`} />
+      <XRCanvas space={space} walls={walls} assets={assets} />
     </main>
   );
 }

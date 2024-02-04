@@ -188,3 +188,6 @@ export const verificationTokens = createTable(
 
 export type Space = typeof spaces.$inferSelect;
 export type Asset = typeof assets.$inferSelect;
+export type SpaceAsset = typeof spaceAssets.$inferSelect;
+export type SpaceAssetJoined = { asset: Asset; spaceAsset: SpaceAsset };
+export type Wall = typeof walls.$inferSelect;

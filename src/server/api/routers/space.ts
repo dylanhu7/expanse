@@ -6,7 +6,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { spaceAssets, spaces, walls } from "~/server/db/schema";
+import { assets, spaceAssets, spaces, walls } from "~/server/db/schema";
 
 export const spaceRouter = createTRPCRouter({
   create: protectedProcedure
@@ -124,7 +124,8 @@ export const spaceRouter = createTRPCRouter({
       return await ctx.db
         .select()
         .from(spaceAssets)
-        .where(eq(spaceAssets.spaceId, input.spaceId));
+        .where(eq(spaceAssets.spaceId, input.spaceId))
+        .innerJoin(assets, eq(assets.id, spaceAssets.assetId));
     }),
 
   addAsset: protectedProcedure

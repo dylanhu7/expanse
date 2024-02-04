@@ -1,16 +1,15 @@
 "use client";
 
+import { GizmoHelper, GizmoViewport, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Controllers, Hands, VRButton, XR } from "@react-three/xr";
-
-import { GizmoHelper, GizmoViewport, OrbitControls } from "@react-three/drei";
-import {
-  WallElement,
-  type Wall,
-} from "~/app/immersive/_components/immersive/wall";
+import { WallElement } from "~/app/immersive/_components/immersive/wall";
+import type { Space, SpaceAssetJoined, Wall } from "~/server/db/schema";
 
 interface XRCanvasProps {
-  data: string;
+  space: Space;
+  walls: Wall[];
+  assets: SpaceAssetJoined[];
 }
 
 const inBrowser = "false";
@@ -80,9 +79,16 @@ export function XRCanvas(props: XRCanvasProps) {
   );
 }
 
+const w = {
+  id: "1",
+  spaceId: "1",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
 const exampleWalls: Wall[] = [
-  { x1: 0, y1: 0, x2: 4, y2: 0 },
-  { x1: 0, y1: 0, x2: 0, y2: 4 },
-  { x1: 4, y1: 0, x2: 4, y2: 4 },
-  { x1: 0, y1: 4, x2: 4, y2: 4 },
+  { ...w, x1: 0, y1: 0, x2: 4, y2: 0 },
+  { ...w, x1: 0, y1: 0, x2: 0, y2: 4 },
+  { ...w, x1: 4, y1: 0, x2: 4, y2: 4 },
+  { ...w, x1: 0, y1: 4, x2: 4, y2: 4 },
 ];
